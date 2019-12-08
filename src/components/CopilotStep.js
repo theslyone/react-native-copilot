@@ -1,10 +1,8 @@
 // @flow
 import { Component, createElement } from 'react';
-import PropTypes from 'prop-types';
 
+import { AppCopilotContext } from '../hocs/copilot';
 import ConnectedCopilotStep from './ConnectedCopilotStep';
-
-import type { CopilotContext } from '../types';
 
 type Props = {
   name: string,
@@ -13,14 +11,6 @@ type Props = {
 };
 
 class CopilotStep extends Component<Props> {
-  static contextTypes = {
-    _copilot: PropTypes.object,
-  }
-
-  context: {
-    _copilot: CopilotContext,
-  }
-
   render() {
     const currentStep = this.context._copilot.getCurrentStep();
 
@@ -34,5 +24,6 @@ class CopilotStep extends Component<Props> {
     );
   }
 }
+CopilotStep.contextType = AppCopilotContext;
 
 export default CopilotStep;

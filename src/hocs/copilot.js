@@ -1,6 +1,5 @@
 // @flow
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import { View } from 'react-native';
 
@@ -13,6 +12,20 @@ import { OFFSET_WIDTH } from '../components/style';
 import { getFirstStep, getLastStep, getStepNumber, getPrevStep, getNextStep } from '../utilities';
 
 import type { Step, CopilotContext } from '../types';
+
+// {
+//   _copilot: {
+//     start: this.start,
+//     stop: this.stop,
+//     registerStep: this.registerStep,
+//     unregisterStep: this.unregisterStep,
+//     getCurrentStep: () => this.state.currentStep,
+//   },
+// }
+
+const AppCopilotContext = React.createContext('');
+
+export { AppCopilotContext };
 
 /*
 This is the maximum wait time for the steps to be registered before starting the tutorial
@@ -48,16 +61,6 @@ const copilot = ({
         currentStep: null,
         visible: false,
       };
-
-      getChildContext(): { _copilot: CopilotContext } {
-        return {
-          _copilot: {
-            registerStep: this.registerStep,
-            unregisterStep: this.unregisterStep,
-            getCurrentStep: () => this.state.currentStep,
-          },
-        };
-      }
 
       componentDidMount() {
         this.mounted = true;
@@ -173,42 +176,49 @@ const copilot = ({
 
       render() {
         return (
-          <View style={wrapperStyle || { flex: 1 }}>
-            <WrappedComponent
-              {...this.props}
-              start={this.start}
-              currentStep={this.state.currentStep}
-              visible={this.state.visible}
-              copilotEvents={this.eventEmitter}
-            />
-            <CopilotModal
-              next={this.next}
-              prev={this.prev}
-              stop={this.stop}
-              visible={this.state.visible}
-              isFirstStep={this.isFirstStep()}
-              isLastStep={this.isLastStep()}
-              currentStepNumber={this.getStepNumber()}
-              currentStep={this.state.currentStep}
-              labels={labels}
-              stepNumberComponent={stepNumberComponent}
-              tooltipComponent={tooltipComponent}
-              tooltipStyle={tooltipStyle}
-              overlay={overlay}
-              animated={animated}
-              androidStatusBarVisible={androidStatusBarVisible}
-              backdropColor={backdropColor}
-              svgMaskPath={svgMaskPath}
-              ref={(modal) => { this.modal = modal; }}
-            />
-          </View>
+          <AppCopilotContext.Provider value={{
+            _copilot: {
+              start: this.start,
+              stop: this.stop,
+              registerStep: this.registerStep,
+              unregisterStep: this.unregisterStep,
+              getCurrentStep: () => this.state.currentStep,
+            },
+          }}
+          >
+            <View style={wrapperStyle || { flex: 1 }}>
+              <WrappedComponent
+                {...this.props}
+                start={this.start}
+                currentStep={this.state.currentStep}
+                visible={this.state.visible}
+                copilotEvents={this.eventEmitter}
+              />
+              <CopilotModal
+                next={this.next}
+                prev={this.prev}
+                stop={this.stop}
+                visible={this.state.visible}
+                isFirstStep={this.isFirstStep()}
+                isLastStep={this.isLastStep()}
+                currentStepNumber={this.getStepNumber()}
+                currentStep={this.state.currentStep}
+                labels={labels}
+                stepNumberComponent={stepNumberComponent}
+                tooltipComponent={tooltipComponent}
+                tooltipStyle={tooltipStyle}
+                overlay={overlay}
+                animated={animated}
+                androidStatusBarVisible={androidStatusBarVisible}
+                backdropColor={backdropColor}
+                svgMaskPath={svgMaskPath}
+                ref={(modal) => { this.modal = modal; }}
+              />
+            </View>
+          </AppCopilotContext.Provider>
         );
       }
     }
-
-    Copilot.childContextTypes = {
-      _copilot: PropTypes.object.isRequired,
-    };
 
     return hoistStatics(Copilot, WrappedComponent);
   };

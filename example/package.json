@@ -17,7 +17,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "test": "node node_modules/jest/bin/jest.js --watch",
-    "watch": "node scripts/watch-and-copy-src.js"
+    "watcher": "node scripts/watch-and-copy-src.js"
   },
   "jest": {
     "preset": "jest-expo"

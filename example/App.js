@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet, Text, Image, View, TouchableOpacity, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { copilot, walkthroughable, CopilotStep } from 'react-native-copilot';
+import { copilot, AppCopilotContext, walkthroughable, CopilotStep } from 'react-native-copilot';
 
 const WalkthroughableText = walkthroughable(Text);
 const WalkthroughableImage = walkthroughable(Image);
@@ -57,7 +57,6 @@ const styles = StyleSheet.create({
 
 class App extends Component {
   static propTypes = {
-    start: PropTypes.func.isRequired,
     copilotEvents: PropTypes.shape({
       on: PropTypes.func.isRequired,
     }).isRequired,
@@ -69,7 +68,7 @@ class App extends Component {
 
   componentDidMount() {
     this.props.copilotEvents.on('stepChange', this.handleStepChange);
-    this.props.start();
+    // this.context._copilot.start();
   }
 
   handleStepChange = (step) => {
@@ -100,7 +99,7 @@ class App extends Component {
             />
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={() => this.props.start()}>
+          <TouchableOpacity style={styles.button} onPress={() => this.context._copilot.start()}>
             <Text style={styles.buttonText}>START THE TUTORIAL!</Text>
           </TouchableOpacity>
         </View>
@@ -120,8 +119,9 @@ class App extends Component {
     );
   }
 }
+App.contextType = AppCopilotContext;
 
 export default copilot({
   animated: true, // Can be true or false
-  overlay: 'svg', // Can be either view or svg
+  overlay: 'view', // Can be either view or svg
 })(App);
